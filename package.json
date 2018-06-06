@@ -1,0 +1,30 @@
+{
+  "name": "content-scraper",
+  "version": "1.0.0",
+  "description": "A Node.js command line application that tracks the latest prices at an eCommerce site and saves them to a spreadsheet in CSV format.",
+  "main": "scraper.js",
+  "dependencies": {
+    "json2csv": "^4.1.3",
+    "scrape-it": "^5.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeeVaughn/content-scraper.git"
+  },
+  "keywords": [
+    "scraper",
+    "Treehouse",
+    "project",
+    "pricing"
+  ],
+  "author": "Daniel Lee Vaughn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LeeVaughn/content-scraper/issues"
+  },
+  "homepage": "https://github.com/LeeVaughn/content-scraper#readme"
+}
