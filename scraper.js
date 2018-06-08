@@ -6,9 +6,25 @@ const Json2csvParser = require('json2csv').Parser;
 function checkDirSync(dir) {
     try {
         fs.statSync(dir);
-    } catch(err) {
+    } catch(error) {
         fs.mkdirSync(dir);
     }
+}
+
+// logs error messages to scraper-error.log file
+function errorLog(error) {
+    const date = new Date();
+    const errorDate = date.toString();
+
+    if (error.message.includes("ENOTFOUND")) {
+        console.error(`There has been an ${error.code} error. Unable to connect to http://shirts4mike.com/`);
+    } else {
+        console.error(error);
+    }
+
+    fs.appendFile("scraper-error.log", `${errorDate}: ${error} \n`, (error) => {
+        if (error) throw (error);
+    });
 }
 
 checkDirSync("data");
