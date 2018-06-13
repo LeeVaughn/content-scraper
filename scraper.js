@@ -1,7 +1,17 @@
 const fs = require('fs');
 const scrapeIt = require("scrape-it");
-const Json2csvParser = require('json2csv').Parser;
+const json2csv = require('json2csv').parse;
 let shirtsRemaining = 0;
+const url = "http://shirts4mike.com/";
+let shirtInfo = [];
+const fields = [
+    {label: "Title", value: "title"},
+    {label: "Price", value: "price"},
+    {label: "Image URL", value: "imageURL"},
+    {label: "URL", value: "url"},
+    {label: "Time", value: "time"}
+];
+const options = {fields};
 
 // checks if directory exists, and creates it if it doesn't
 function checkDirSync(dir) {
@@ -30,13 +40,12 @@ function errorLog(error) {
     });
 }
 
-// scrapes site and creates links for individual shirts
+// scrapes landing page and creates links for individual shirt pages
 function scrapeShirtLinks () {
     let shirtLinks = [];
 
     // gets url from each list item
     // adds urls to array
-    // calls scrapeShirt function using each object in the array as an argument
     scrapeIt("http://shirts4mike.com/shirts.php", {
         shirts: {
             listItem: ".products li a",
@@ -53,11 +62,65 @@ function scrapeShirtLinks () {
             shirtsRemaining = data.data.shirts.length;
 
             for (let i =0; i < shirtsRemaining; i++) {
-                shirtLinks[i] = `http://shirts4mike.com/${data.data.shirts[i].url}`;
+                shirtLinks[i] = `${url}${data.data.shirts[i].url}`;
                 scrapeShirt(shirtLinks[i]);
             }
         }
     });
+}
+
+// scrapes individual shirt pages
+// pushes data for each shirt to an array
+function scrapeShirt(url) {
+    scrapeIt(url, {
+        title: {
+            listItem: ".shirt-details h1"
+        },
+        price: {
+            listItem: ".shirt-details h1 span"
+        },
+        imageURL: {
+            listItem: ".shirt-picture img",
+            data: {
+                url: {
+                    attr: "src"
+                }
+            }
+        }
+    }, (error, data) => {
+        if (error) {
+            errorLog(error);
+        } else {
+            const title = data.data.title[0].slice(4);
+            const price = data.data.price[0];
+            const imageURL = `${url}${data.data.imageURL[0].url}`;
+            const time = new Date().toLocaleTimeString();
+
+            shirtInfo.push({title, price, imageURL, url, time});
+            
+            shirtsRemaining -= 1;
+
+            if (shirtsRemaining === 0) {
+                saveCSV();
+            }
+        }
+    });
+}
+
+// parses shirtInfo array and saves data in a csv file
+function saveCSV() {
+    try {
+        const csv = json2csv(shirtInfo, options);
+        const date = new Date().toISOString().slice(0, 10);
+
+        fs.writeFile(`data/${date}.csv`, csv, (error) => {
+            if (error) {
+                throw (error);
+            }
+        })
+    } catch (error) {
+        errorLog(error);
+    }
 }
 
 // run on start
