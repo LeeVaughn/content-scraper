@@ -117,6 +117,7 @@ function saveCSV() {
             if (error) {
                 throw (error);
             }
+            console.log("scraper.js has successfully finished running.");
         })
     } catch (error) {
         errorLog(error);
@@ -124,6 +125,6 @@ function saveCSV() {
 }
 
 // run on start
-console.log("scraper.js is now running.")
+console.log("scraper.js has started running.");
 checkDirSync("data");
 scrapeShirtLinks();
