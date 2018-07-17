@@ -28,7 +28,7 @@ function errorLog(error) {
     const errorDate = date.toString();
 
     if (error.message.includes("ENOTFOUND")) {
-        console.error(`There has been an ${error.code} error. Unable to connect to http://shirts4mike.com/`);
+        console.error(`There has been an ${error.code} error. Unable to connect to ${error.host}`);
     } else {
         console.error(error);
     }
